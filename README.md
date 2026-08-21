@@ -19,7 +19,7 @@
 
 全文含 7 个命题、1 个总定理、5 组动力系统方程、3 张数据表，以及 7 篇（基本）真实的参考文献。逻辑自洽性认真，物理真实性随缘。
 
-**[📖 在线阅读全文](paper/glueball-cultivation-theory.md) ｜ [🎮 交互演示：结丹相变模拟器](https://halflifezyf2680.github.io/glueball-cultivation-theory/)"
+**[📖 在线阅读全文](paper/glueball-cultivation-theory.md) ｜ [🎮 交互演示：结丹相变模拟器](https://halflifezyf2680.github.io/glueball-cultivation-theory/code_artifact.html)
 
 ## 文件说明
 
@@ -29,6 +29,12 @@
 | `paper/glueball-cultivation-theory.pdf` | 论文 PDF（作者自行排版，单栏，viXra 提交版） |
 | `paper/glueball-cultivation-theory.docx` | 论文 Word 源文件 |
 | `code_artifact.html` | 交互演示平台：胶球能谱⇄境界梯级、结丹相变模拟器、味单态纯化 |
+
+## 补充文档（Supplementary Materials）
+
+[`supplementary/胶球与修炼体系研究.md`](supplementary/胶球与修炼体系研究.md)（[docx 版](supplementary/胶球与修炼体系研究.docx)）——姊妹篇《胶球物理学图景与现代修炼体系的理论映射：非阿贝尔规范场下的实相建构与跃迁机制研究》，走**规范场论/相变物理**路线：结丹 = 胶子自作用凝聚、境界壁垒 = 杨–米尔斯质量间隙、无漏之体 = 色荷绝对禁闭、元婴/阳神 = 味单态纯化、凭空造物 = 迹反常与膨胀子场调控。
+
+与主文（**动力系统/控制论**路线：阴阳 = 双向动力学、五行 = 功能模态、灵根 = 耦合谱、功法 = 控制协议）构成同一世界观的双支柱：姊妹篇回答金丹**为何能存在**（理论物理层），主文回答修士**如何将其工程化实现**（控制工程层）。
 
 ## 引用
 
