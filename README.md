@@ -19,7 +19,7 @@
 
 全文含 7 个命题、1 个总定理、5 组动力系统方程、3 张数据表，以及 7 篇（基本）真实的参考文献。逻辑自洽性认真，物理真实性随缘。
 
-**[📖 在线阅读全文](paper/glueball-cultivation-theory.md)**
+**[📖 在线阅读全文](paper/glueball-cultivation-theory.md) ｜ [🎮 交互演示：结丹相变模拟器](https://halflifezyf2680.github.io/glueball-cultivation-theory/)"
 
 ## 文件说明
 
@@ -28,6 +28,7 @@
 | [`paper/glueball-cultivation-theory.md`](paper/glueball-cultivation-theory.md) | 论文全文（GitHub 直接阅读） |
 | `paper/glueball-cultivation-theory.pdf` | 论文 PDF（作者自行排版，单栏，viXra 提交版） |
 | `paper/glueball-cultivation-theory.docx` | 论文 Word 源文件 |
+| `code_artifact.html` | 交互演示平台：胶球能谱⇄境界梯级、结丹相变模拟器、味单态纯化 |
 
 ## 引用
 

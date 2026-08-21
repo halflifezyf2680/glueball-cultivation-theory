@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>胶球物理与修真体系理论映射交互研讨平台</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warmbg: '#fbf9f5',
+                        panelbg: '#f3efe6',
+                        accentamber: '#d97706',
+                        accentindigo: '#4f46e5',
+                        accentemerald: '#059669',
+                        darktext: '#1c1917',
+                        mutedtext: '#78716c'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Dedicated Chart Container styling to strictly enforce layout limits and prevent canvas overflow */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 380px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 360px;
+            }
+        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1ede4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6cebf;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a89f91;
+        }
+    </style>
+</head>
+<!-- Chosen Palette: Warm Neutral Harmony (Warm Stone background #fbf9f5, Card panels #f3efe6, Warm Amber/Indigo/Emerald functional accents) -->
+<!-- Application Structure Plan:
+    1. Header & Hero Dashboard: Direct key takeaway metrics (Mass Gap, BESIII X(2370) key discovery, Confinement status) and quick domain concept introduction.
+    2. Section 1 - Theoretical Foundations (五大理论相变映射): Introductory context and interactive tabs for the 5 key physical mechanisms (Soliton condensation, Mass gap, Confinement, Decoupling, Trace Anomaly).
+    3. Section 2 - Spectrum & Realm Explorer (胶球能谱与修真境界映射): Interactive Chart.js visualizer mapping Lattice QCD mass predictions (GeV) and experimental candidates (f0, f2, X(2370), Odderon) to cultivation realms (筑基/结丹/阴神/元婴). Clicking elements shows detailed physical and metaphysical state profiles.
+    4. Section 3 - Interactive Phase Transition & Dan Creation Simulator (结丹相变与能量凝聚模拟器): Interactive physics simulator with sliders for Field Energy Density and Coupling Strength, rendering real-time state changes on custom HTML5 Canvas (Color Flux Tube collapse vs Perturbative propagation) and computing activation of Yang-Mills mass gap.
+    5. Section 4 - Flavor Singlet Purity & Decoupling Visualizer (味单态解耦与阳神纯化): Doughnut chart visualizer depicting wavefunction state vector mixing |Ψ⟩ = α|G⟩ + β|q-qbar⟩, with interactive slider demonstrating BESIII's X(2370) discovery of minimal mixing angle (2°-5°) as the blueprint for pure Yang-Shen detachment.
+    6. Section 5 - Dynamic Comprehensive Mapping Matrix (八维物理修真全景对照矩阵): Searchable, filterable interactive card grid mapping all 8 core theoretical dimensions between QCD physics and cultivation phenomena.
+    7. Section 6 - Experimental & Philosophical Synthesis: Summary of research horizons and future Tao-physics synthesis.
+-->
+<!-- Visualization & Content Choices:
+    - Spectrum Visualizer: Chart.js Bar + Line chart comparing experimental candidates and LQCD ranges. Goal: Compare & Map. Method: Dynamic interactive bar chart + detail display.
+    - Dan Creation Simulator: Custom HTML5 Canvas rendering color flux tube confinement and soliton collapse. Goal: Interactive Demonstration of phase transition. Method: Canvas API (No SVG).
+    - Wavefunction Purity Visualizer: Chart.js Doughnut chart dynamic update via purity slider. Goal: Show decoupling of pure glueball (Flavor singlet).
+    - Comprehensive Matrix: Filterable HTML grid with interactive search and category toggles. Goal: Organize & Search key domain comparisons.
+-->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<body class="bg-warmbg text-darktext font-sans antialiased leading-relaxed selection:bg-amber-200 selection:text-amber-900">
+
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-50 bg-warmbg/90 backdrop-blur border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl">☯</span>
+                <div>
+                    <h1 class="font-bold text-lg text-stone-900 leading-none">胶球物理与修炼体系研讨</h1>
+                    <span class="text-xs text-mutedtext">非阿贝尔规范场论与修真相变映射系统</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium text-stone-700">
+                <a href="#foundations" class="hover:text-amber-600 transition-colors">理论基石</a>
+                <a href="#spectrum" class="hover:text-amber-600 transition-colors">能谱与境界</a>
+                <a href="#simulator" class="hover:text-amber-600 transition-colors">结丹相变模拟</a>
+                <a href="#purity" class="hover:text-amber-600 transition-colors">味单态纯化</a>
+                <a href="#matrix" class="hover:text-amber-600 transition-colors">全景对照矩阵</a>
+            </nav>
+            <a href="#simulator" class="bg-stone-900 hover:bg-amber-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-sm">
+                启动相变模拟
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Hero & KPI Overview -->
+        <section class="bg-panelbg rounded-2xl p-6 sm:p-8 border border-stone-300 shadow-sm relative overflow-hidden">
+            <div class="max-w-3xl relative z-10 space-y-4">
+                <div class="inline-flex items-center space-x-2 bg-amber-100 border border-amber-300 text-amber-900 px-3 py-1 rounded-full text-xs font-semibold">
+                    <span>🔬 BESIII 突破性实验实证</span>
+                    <span>•</span>
+                    <span>规范场论与内丹学前沿交叉</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-stone-900 tracking-tight">
+                    从非阿贝尔自相互作用到纯阳法身：<br class="hidden sm:block">实相建构的量子物理映射
+                </h2>
+                <p class="text-stone-700 text-sm sm:text-base leading-relaxed">
+                    在量子色动力学（QCD）中，胶球（Glueball）是唯一完全由相互作用力玻色子自缚构成的物理实体；在修真理论中，内丹与阳神亦是摆脱肉身费米子杂质、由纯粹天地能量相干自聚生成的无漏法相。本平台基于非微扰杨-米尔斯场论与BESIII实验关于赝标量胶球 $X(2370)$ 的关键测量，为您展现微观量子图景与宏观修炼境界演化的严密映射。
+                </p>
+            </div>
+
+            <!-- Highlights Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-stone-300">
+                <div class="bg-warmbg/80 p-4 rounded-xl border border-stone-200">
+                    <div class="text-xs text-mutedtext font-medium">杨-米尔斯质量间隙</div>
+                    <div class="text-xl sm:text-2xl font-bold text-amber-600 mt-1">Δ ≈ 1.5 - 1.7 GeV</div>
+                    <div class="text-xs text-stone-600 mt-1">对应修真“大境界突破”非连续能垒</div>
+                </div>
+                <div class="bg-warmbg/80 p-4 rounded-xl border border-stone-200">
+                    <div class="text-xs text-mutedtext font-medium">BESIII 实证胶球候选</div>
+                    <div class="text-xl sm:text-2xl font-bold text-indigo-600 mt-1">X(2370) [0⁻⁺]</div>
+                    <div class="text-xs text-stone-600 mt-1">m = 2376.3 MeV/c², 味单态极化</div>
+                </div>
+                <div class="bg-warmbg/80 p-4 rounded-xl border border-stone-200">
+                    <div class="text-xs text-mutedtext font-medium">色荷约束与圆满无漏</div>
+                    <div class="text-xl sm:text-2xl font-bold text-emerald-600 mt-1">Color Singlet 1</div>
+                    <div class="text-xs text-stone-600 mt-1">净色荷为零，能量拓扑自闭合内循环</div>
+                </div>
+                <div class="bg-warmbg/80 p-4 rounded-xl border border-stone-200">
+                    <div class="text-xs text-mutedtext font-medium">味单态解耦极化角</div>
+                    <div class="text-xl sm:text-2xl font-bold text-stone-800 mt-1">θ ≈ 2° - 5°</div>
+                    <div class="text-xs text-stone-600 mt-1">与常规夸克态极其微小地混合 (纯阳度>95%)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 1: Foundations & 5 Core Mechanisms -->
+        <section id="foundations" class="space-y-6">
+            <div class="border-l-4 border-amber-600 pl-4 space-y-1">
+                <h3 class="text-xl font-bold text-stone-900">1. 规范场论视角下的修真五大核心相变机制</h3>
+                <p class="text-sm text-stone-600">
+                    传统修炼中的“炼气、结丹、无漏、阳神、虚实”五重演化，可完整映射为非阿贝尔规范场从微扰自由波动到非微扰拓扑孤子的物理相变。
+                </p>
+            </div>
+
+            <!-- Dynamic Tab Selector -->
+            <div class="bg-panelbg p-2 rounded-xl border border-stone-300 flex flex-wrap gap-2 text-sm font-medium">
+                <button onclick="selectMechanism(0)" id="mech-btn-0" class="px-4 py-2 rounded-lg bg-stone-900 text-white shadow-sm transition-all">
+                    ① 炼气化丹：微扰传播子 → 非微扰孤子
+                </button>
+                <button onclick="selectMechanism(1)" id="mech-btn-1" class="px-4 py-2 rounded-lg text-stone-700 hover:bg-stone-200 transition-all">
+                    ② 境界阶梯：质量间隙与非连续能垒
+                </button>
+                <button onclick="selectMechanism(2)" id="mech-btn-2" class="px-4 py-2 rounded-lg text-stone-700 hover:bg-stone-200 transition-all">
+                    ③ 圆满无漏：色荷绝对禁闭与自洽内循环
+                </button>
+                <button onclick="selectMechanism(3)" id="mech-btn-3" class="px-4 py-2 rounded-lg text-stone-700 hover:bg-stone-200 transition-all">
+                    ④ 阴阳混元：味单态解耦与纯阳脱胎
+                </button>
+                <button onclick="selectMechanism(4)" id="mech-btn-4" class="px-4 py-2 rounded-lg text-stone-700 hover:bg-stone-200 transition-all">
+                    ⑤ 虚实相生：迹反常调控与宏观物质重塑
+                </button>
+            </div>
+
+            <!-- Tab Content Display Card -->
+            <div id="mechanism-display" class="bg-warmbg p-6 rounded-2xl border border-stone-300 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <!-- Dynamically filled by JS -->
+            </div>
+        </section>
+
+        <!-- Section 2: Interactive Spectrum & Realm Mapping Explorer -->
+        <section id="spectrum" class="space-y-6">
+            <div class="border-l-4 border-indigo-600 pl-4 space-y-1">
+                <h3 class="text-xl font-bold text-stone-900">2. 胶球能谱 (Lattice QCD) 与修真境界梯级映射</h3>
+                <p class="text-sm text-stone-600">
+                    本板块展示格点量子色动力学（LQCD）对不同自旋宇称 ($J^{PC}$) 胶球态的质量预测，并结合 BESIII 等实验候选粒子（如 $X(2370)$、$f_0(1710)$），对应修真体系中的境界梯级与法相属性。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                <!-- Chart Box -->
+                <div class="lg:col-span-7 bg-panelbg p-5 rounded-2xl border border-stone-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-stone-900 text-sm">胶球能谱质量预测与实验候选态 (GeV/c²)</h4>
+                        <span class="text-xs text-stone-500">点击柱体查看详细修炼映射</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="spectrumChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detail Profile Box -->
+                <div class="lg:col-span-5 bg-warmbg p-5 rounded-2xl border border-stone-300 shadow-sm space-y-4">
+                    <div class="flex items-center space-x-3 border-b border-stone-200 pb-3">
+                        <span id="detail-badge" class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
+                            标量胶球 0⁺⁺
+                        </span>
+                        <h4 id="detail-title" class="font-bold text-stone-900 text-lg">结丹期 / 内丹初凝</h4>
+                    </div>
+
+                    <div class="space-y-3 text-sm text-stone-700">
+                        <div>
+                            <span class="font-semibold text-stone-900">物理能谱属性：</span>
+                            <span id="detail-physics">格点QCD预测 1.5~1.7 GeV/c²；主要候选粒子 f₀(1710) / f₀(1500)</span>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-stone-900">衰变与反应通道：</span>
+                            <span id="detail-decay">J/ψ 辐射衰变产额显著，强烈手征抑制衰变特性</span>
+                        </div>
+                        <div class="p-3 bg-stone-100 rounded-xl border border-stone-200">
+                            <span class="font-semibold text-stone-900 block mb-1">修真本体论映射：</span>
+                            <p id="detail-cultivation" class="text-xs text-stone-600 leading-relaxed">
+                                纯胶球基态，对应杨-米尔斯谱系中最低质量间隙激发。相当于修行者在丹田虚空中成功诱导色通量管收缩，首次将连续流动的灵气凝炼为具备恒定质量的内丹实体。
+                            </p>
+                        </div>
+                        <div class="pt-2 border-t border-stone-200 flex justify-between items-center text-xs text-stone-500">
+                            <span>映射对应费米子含量：<strong id="detail-fermion" class="text-stone-800">高 (后天阴质混杂)</strong></span>
+                            <span>法相稳定性：<strong id="detail-stability" class="text-stone-800">基态初具</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Dan Creation Interactive Phase Transition Simulator -->
+        <section id="simulator" class="space-y-6">
+            <div class="border-l-4 border-emerald-600 pl-4 space-y-1">
+                <h3 class="text-xl font-bold text-stone-900">3. 结丹相变与能量局域化模拟器 (Interactive Simulator)</h3>
+                <p class="text-sm text-stone-600">
+                    通过调整局部能量密度（意念真火）与非线性耦合强度（规范场自耦合 constant $g$），观察系统如何从高耗散的自由波（微扰区）跃迁为色通量管收缩自束缚的胶球孤子态（结丹）。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-panelbg p-6 rounded-2xl border border-stone-300">
+                <!-- Controls & Physics Readout -->
+                <div class="lg:col-span-5 space-y-5">
+                    <h4 class="font-bold text-stone-900 flex items-center space-x-2">
+                        <span>⚡ 规范场相变控制台</span>
+                    </h4>
+
+                    <!-- Slider 1: Energy Density -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-semibold text-stone-700">
+                            <label for="slider-energy">场能密度 / 意念强度 (ϵ)</label>
+                            <span id="val-energy" class="text-amber-600">45 %</span>
+                        </div>
+                        <input type="range" id="slider-energy" min="10" max="100" value="45" oninput="updateSimulation()"
+                               class="w-full accent-amber-600 bg-stone-200 h-2 rounded-lg cursor-pointer">
+                        <p class="text-xs text-stone-500">提升能密度以激活杨-米尔斯质量间隙阈值 Δ。</p>
+                    </div>
+
+                    <!-- Slider 2: Coupling Constant g -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-semibold text-stone-700">
+                            <label for="slider-coupling">非对易自耦合强度 (g / αₛ)</label>
+                            <span id="val-coupling" class="text-indigo-600">0.35</span>
+                        </div>
+                        <input type="range" id="slider-coupling" min="0.05" max="1.0" step="0.01" value="0.35" oninput="updateSimulation()"
+                               class="w-full accent-indigo-600 bg-stone-200 h-2 rounded-lg cursor-pointer">
+                        <p class="text-xs text-stone-500">弱耦合呈现渐近自由（散漫灵气）；强耦合诱发色禁闭（收缩结丹）。</p>
+                    </div>
+
+                    <!-- Computed State Box -->
+                    <div class="bg-warmbg p-4 rounded-xl border border-stone-300 space-y-2">
+                        <div class="text-xs font-bold text-stone-500 uppercase tracking-wider">实时量子与修炼状态</div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-stone-600">当前相态：</span>
+                            <span id="sim-phase" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-stone-200 text-stone-800">
+                                渐近自由 (微扰灵气)
+                            </span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-stone-600">质量间隙激活度：</span>
+                            <div class="w-32 bg-stone-200 h-2 rounded-full overflow-hidden">
+                                <div id="sim-gap-bar" class="bg-amber-600 h-full w-[20%] transition-all"></div>
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-stone-600">色通量管状态：</span>
+                            <span id="sim-flux" class="text-xs font-semibold text-stone-700">弥散发散</span>
+                        </div>
+                        <p id="sim-status-desc" class="text-xs text-stone-600 pt-2 border-t border-stone-200">
+                            系统处于阿贝尔式线性传输区，能量向外辐射泄漏，无法形成稳定凝聚核。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Canvas Visualization -->
+                <div class="lg:col-span-7 flex flex-col justify-between space-y-3">
+                    <div class="flex justify-between items-center text-xs text-stone-600">
+                        <span class="font-bold text-stone-800">色通量管与孤子凝聚态实时渲染 (HTML5 Canvas)</span>
+                        <span id="fps-counter" class="text-stone-400">FPS: 60</span>
+                    </div>
+                    <div class="w-full bg-stone-950 rounded-xl overflow-hidden shadow-inner flex items-center justify-center p-2 relative h-72 sm:h-80">
+                        <canvas id="simCanvas" class="w-full h-full block"></canvas>
+                        <!-- Overlay Legend -->
+                        <div class="absolute bottom-3 left-3 bg-stone-900/80 backdrop-blur text-stone-300 text-[10px] p-2 rounded-lg border border-stone-700 space-y-1">
+                            <div class="flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                                <span>胶子场强节点 ($A^a_\mu$)</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5">
+                                <span class="w-2 h-2 rounded-full bg-indigo-500 inline-block"></span>
+                                <span>非对易自作用流 (三/四胶子顶点)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Flavor Singlet Purity & Decoupling Visualizer -->
+        <section id="purity" class="space-y-6">
+            <div class="border-l-4 border-amber-600 pl-4 space-y-1">
+                <h3 class="text-xl font-bold text-stone-900">4. 味单态 (Flavor-Singlet) 解耦与阳神纯化机制</h3>
+                <p class="text-sm text-stone-600">
+                    探究物理态波函数 $|\Psi\rangle = \alpha |G\rangle + \beta |u\bar{u}+d\bar{d}\rangle + \gamma |s\bar{s}\rangle$ 中胶球成分与夸克成分的解耦，结合 BESIII 对 $X(2370)$ 纯度及混合角（仅 $2^\circ \sim 5^\circ$）的测量。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center bg-warmbg p-6 rounded-2xl border border-stone-300 shadow-sm">
+                <!-- Doughnut Chart Container -->
+                <div class="lg:col-span-5 flex flex-col items-center">
+                    <h4 class="font-bold text-stone-900 text-sm mb-2">法身波函数量子态叠加比率</h4>
+                    <div class="chart-container" style="max-height: 280px;">
+                        <canvas id="purityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Dynamic Controls & Conceptual Synthesis -->
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-xs font-semibold text-stone-800">
+                            <label for="slider-purity">修真阳神纯化度 / 味单态比例 ($\alpha^2$)</label>
+                            <span id="val-purity-pct" class="text-amber-600 font-bold">95 %</span>
+                        </div>
+                        <input type="range" id="slider-purity" min="20" max="99" value="95" oninput="updatePurityChart()"
+                               class="w-full accent-amber-600 bg-stone-200 h-2 rounded-lg cursor-pointer">
+                        <div class="flex justify-between text-[11px] text-stone-500">
+                            <span>后天凡胎 (强夸克杂化态)</span>
+                            <span>BESIII X(2370) 纯洁度</span>
+                            <span>纯阳法身 (纯胶味单态)</span>
+                        </div>
+                    </div>
+
+                    <div id="purity-explanation" class="p-4 bg-panelbg rounded-xl border border-stone-300 text-xs sm:text-sm text-stone-700 leading-relaxed space-y-2">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 text-xs">
+                        <div class="p-3 bg-stone-100 rounded-lg border border-stone-200">
+                            <span class="text-mutedtext block">味单态衰变特征：</span>
+                            <span class="font-bold text-stone-900">$K^*(892)^0\bar{K}^0$ 通道极度抑制</span>
+                        </div>
+                        <div class="p-3 bg-stone-100 rounded-lg border border-stone-200">
+                            <span class="text-mutedtext block">修真解耦结果：</span>
+                            <span class="font-bold text-stone-900">切断物质衰变通道，超脱凡胎</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Dynamic Comprehensive Mapping Matrix -->
+        <section id="matrix" class="space-y-6">
+            <div class="border-l-4 border-stone-800 pl-4 space-y-1">
+                <h3 class="text-xl font-bold text-stone-900">5. 规范场与修炼体系八维对照全景矩阵</h3>
+                <p class="text-sm text-stone-600">
+                    全面系统梳理QCD微观物理表述与宏观修炼表象在本体、动力学、能级、守恒、质能创生等8个维度的严密映射。支持关键词实时检索与维度筛选。
+                </p>
+            </div>
+
+            <!-- Search and Filter Controls -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-panelbg p-4 rounded-xl border border-stone-300">
+                <div class="w-full sm:w-72 relative">
+                    <input type="text" id="matrix-search" placeholder="检索维度、物理术语或修真概念..." oninput="filterMatrix()"
+                           class="w-full pl-9 pr-4 py-2 bg-warmbg border border-stone-300 rounded-lg text-xs text-stone-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    <span class="absolute left-3 top-2.5 text-stone-400 text-xs">🔍</span>
+                </div>
+                <div class="flex flex-wrap gap-2 text-xs">
+                    <button onclick="setMatrixFilter('all')" class="matrix-flt-btn active-flt px-3 py-1.5 rounded-lg bg-stone-900 text-white font-medium">全部 (8维)</button>
+                    <button onclick="setMatrixFilter('energy')" class="matrix-flt-btn px-3 py-1.5 rounded-lg bg-warmbg text-stone-700 hover:bg-stone-200 border border-stone-300 font-medium">能量与结构</button>
+                    <button onclick="setMatrixFilter('phase')" class="matrix-flt-btn px-3 py-1.5 rounded-lg bg-warmbg text-stone-700 hover:bg-stone-200 border border-stone-300 font-medium">相变与演化</button>
+                </div>
+            </div>
+
+            <!-- Matrix Cards Grid -->
+            <div id="matrix-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dynamically populated by JS -->
+            </div>
+        </section>
+
+        <!-- Section 6: Research Synthesis & Conclusions -->
+        <section class="bg-stone-900 text-stone-200 p-6 sm:p-8 rounded-2xl shadow-lg space-y-4">
+            <h3 class="text-xl font-bold text-amber-400 flex items-center space-x-2">
+                <span>🌌 结论与理论展望：非线性能量相干的终极实相</span>
+            </h3>
+            <p class="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                通过量子色动力学非微扰动力学与内丹学修真理论的交叉映射，我们清晰地看到：无论是在微观高能对撞机中被激发的胶球 $X(2370)$，还是修炼者在体内凝炼的阳神金丹，其本质皆是**非线性自相互作用场在突破临界能密度后，通过局域自相干与对称性自发破缺所建构的稳态拓扑实体**。
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-stone-800 text-xs">
+                <div>
+                    <h4 class="font-semibold text-amber-300 mb-1">实相存在性证实</h4>
+                    <p class="text-stone-400">BESIII实验证实纯力场构建物质并非空想，为内丹“能量化实体”提供了坚实的量子场论证明。</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-amber-300 mb-1">质量生成新路径</h4>
+                    <p class="text-stone-400">超越电弱希格斯机制，迹反常（Trace Anomaly）驱动的维度嬗变证明了能量自身即可直接淬炼出惯性质量。</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-amber-300 mb-1">未来超级陶粲展望</h4>
+                    <p class="text-stone-400">随着高能实验对奇子态（Odderon）与混合角测量的深化，强场真空相变将继续为生命科学与高能物理提供深层交汇。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-stone-200 mt-16 bg-panelbg py-6 text-center text-xs text-stone-500">
+        <p>胶球物理学图景与现代修炼体系理论映射系统 • 基于格点QCD与BESIII $X(2370)$ 实验数据重构</p>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- 1. DATA SOURCES & STATE MANAGEMENT ---
+
+        // Mechanism Data
+        const mechanismsData = [
+            {
+                title: "① 炼气化丹：从微扰传播子到非微扰局域孤子",
+                badge: "微扰/非微扰相变",
+                physics: "在微扰QCD区，胶子作为无质量规范玻色子自由传播（阿贝尔式线性叠加）；当系统进入低能红外区，非对易李代数结构引发强自吸引力，色通量管收缩坍缩为局域孤子态。",
+                cultivation: "“炼气”对应周天经络中无形、流动、无固定形态的高能灵力传输；而“结丹”则是通过意念真火提高局部能量密度，诱发能量系自发坍缩为无需肉身重子物质支撑的“内丹孤子态”。",
+                icon: "🌀"
+            },
+            {
+                title: "② 境界阶梯：杨-米尔斯质量间隙 (Mass Gap)",
+                badge: "离散跃迁",
+                physics: "纯杨-米尔斯场论在量子化后产生不可逾越的能量下界 Δ > 0 (Δ ≈ 1.5-1.7 GeV)。连续的微扰激发被完全冻结，只能通过超过间隙阈值的能量激发离散胶球。",
+                cultivation: "修真中的“境界壁垒”（如筑基突破至结丹、结丹跃迁至元婴）呈现鲜明的非连续性。唯有当体内输入的相干能量达到临界质量间隙 Δ 时，才能固化出新境界，无法通过微小的散乱累加跨越。",
+                icon: "🧗"
+            },
+            {
+                title: "③ 圆满无漏：色荷绝对禁闭与自洽内循环",
+                badge: "Gauge Invariance",
+                physics: "孤立色荷具有红外发散场能，物理可观测态必须处于色单态（Color Singlet, 群维数 1），满足高斯约束 D_i F^{0i,a}|Ψ⟩ = 0。胶球净色荷为零，外部无长程色电/色磁辐射。",
+                cultivation: "道家丹道之“无漏金身”，要求体内精气神完全内敛，形成闭合内循环，不向外界发生熵增性泄漏，亦不受外界凡尘杂质侵蚀。这正是色单态在宏观生命体上的自洽表象。",
+                icon: "🛡️"
+            },
+            {
+                title: "④ 阴阳混元：味单态解耦与纯阳脱胎",
+                badge: "Flavor-Singlet",
+                physics: "纯胶球态易与普通夸克介子态混合。BESIII实验证实赝标量胶球 X(2370) 具有极度纯粹的味单态（Flavor-Singlet）特性，其与常规重夸克偶素混合角仅在 2°~5° 之间。",
+                cultivation: "从后天金丹演化为“阳神/元婴”的过程，本质上是波函数不断降低费米子（肉身夸克）杂化系数、提升纯胶味单态成分的解耦过程，使法身脱离物质肉身的衰变通道。",
+                icon: "☯"
+            },
+            {
+                title: "⑤ 虚实相生：迹反常调控与宏观物质重塑",
+                badge: "Trace Anomaly",
+                physics: "无质量规范场因量子重整化引入迹反常 T^μ_μ = (β/2g) G²，自发生成胶子真空凝聚 ⟨0|G²|0⟩ 与能量标度 Λ_QCD，无需希格斯机制即可赋予物质惯性质量。",
+                cultivation: "高阶修真者“凭空凝物”、“虚室生白”，本质上是以高度相干的意识场调控局域真空结构中的胶子凝聚强度与迹反常项，直接将真空白态转化为具象实体。",
+                icon: "✨"
+            }
+        ];
+
+        // Spectrum Data
+        const spectrumData = [
+            {
+                spin: "标量态 (0⁺⁺)",
+                massLattice: "1.5 ~ 1.7 GeV",
+                candidate: "f₀(1710), f₀(1500)",
+                realm: "结丹期 / 内丹初凝",
+                decay: "J/ψ 辐射衰变产额显著，与夸克偶素强混合",
+                cultivation: "纯胶球基态，对应杨-米尔斯谱系中最低质量间隙激发。相当于在丹田成功诱导色通量管收缩凝炼内丹。",
+                fermion: "高 (后天阴质混杂)",
+                stability: "基态初具",
+                massNum: 1.6
+            },
+            {
+                spin: "张量态 (2⁺⁺)",
+                massLattice: "2.3 ~ 2.4 GeV",
+                candidate: "f₂(2340), 坡密子 (Pomeron)",
+                realm: "阴神极化 / 四极演化",
+                decay: "高能强子前向散射中的色中性动量交换",
+                cultivation: "由两个横向自旋对齐胶子构成的四极激发态，能量运化范围扩展至全身经络，呈现极化张量传输。",
+                fermion: "中等",
+                stability: "高阶激发",
+                massNum: 2.35
+            },
+            {
+                spin: "赝标量态 (0⁻⁺)",
+                massLattice: "2.3 ~ 2.6 GeV",
+                candidate: "X(2370) (BESIII测定)",
+                realm: "元婴凝结 / 味单态法身",
+                decay: "衰变至 K*(892)⁰K̄⁰ 被极度抑制，确立味单态",
+                cultivation: "由轴反常与拓扑荷涨落形成的最轻赝标量胶球，极度纯粹的味单态，对应彻底脱离后天费米子衰变通道的阳神法身。",
+                fermion: "极低 (<5%)",
+                stability: "高度独立长程稳定",
+                massNum: 2.376
+            },
+            {
+                spin: "矢量三胶态 (1⁻⁻)",
+                massLattice: "> 3.0 GeV",
+                candidate: "奇子 (Odderon)",
+                realm: "破空显化 / 三体拓扑",
+                decay: "C-奇宇称三胶子交换，pp与p p̄弹性散射截面差",
+                cultivation: "3个规范玻色子构成的色单态三体拓扑复合物，对应超越双元阴阳对立的三位一体终极法相。",
+                fermion: "纯力场 (0%)",
+                stability: "高阶拓扑束缚态",
+                massNum: 3.1
+            }
+        ];
+
+        // Comprehensive Matrix Data (8 Dimensions)
+        const matrixItems = [
+            {
+                category: "energy",
+                dim: "1. 本体构成",
+                physics: "纯 SU(3)_c 规范玻色子自束缚态，无价夸克参与 (|gg⟩, |ggg⟩)",
+                cultivation: "摆脱血肉凡躯之费米子杂质，由纯粹天地本源强相互作用场自聚凝结而成的实体法相",
+                tags: ["纯胶态", "本体论"]
+            },
+            {
+                category: "phase",
+                dim: "2. 凝聚动力学",
+                physics: "非微扰红外自耦合、色通量管收缩与渐近自由反向效应（红外奴役）",
+                cultivation: "将弥散微扰灵力压缩至临界能密度，诱发非线性自聚集相变，在虚空中构建致密自持能量核",
+                tags: ["色通量管", "筑基凝气"]
+            },
+            {
+                category: "energy",
+                dim: "3. 能级与跃迁",
+                physics: "杨-米尔斯质量间隙 Δ = m(0⁺⁺) > 0，离散高自旋激发谱",
+                cultivation: "境界突破需跨越非连续质量阶梯，无法通过线性微扰累加跨越，唯有相变方可固化新境界",
+                tags: ["质量间隙", "境界突破"]
+            },
+            {
+                category: "energy",
+                dim: "4. 守恒与封闭",
+                physics: "局域规范不变性约束，总态强制处于色单态 (Color Singlet 1)",
+                cultivation: "核心能量拓扑自闭合，无向外耗散之自由色荷辐射，形成高对称性、内外不侵的不灭稳态",
+                tags: ["无漏", "色单态"]
+            },
+            {
+                category: "phase",
+                dim: "5. 质能创生",
+                physics: "共形对称性破缺与迹反常 T^μ_μ ≠ 0，自发生成胶子真空凝聚 ⟨0|G²|0⟩",
+                cultivation: "破除无量纲标度对称性，直接将真空零点能与规范自相互作用势能转化为具有确定质量的实相",
+                tags: ["迹反常", "虚实相生"]
+            },
+            {
+                category: "phase",
+                dim: "6. 形神解耦",
+                physics: "胶球态与介子态混合角演化；味单态粒子衰变选择定则与强抑制机制",
+                cultivation: "剥离后天阴质（费米子杂化态），纯化先天神识（纯胶味单态），实现法身对肉身衰变通道的解耦",
+                tags: ["味单态", "阳神出窍"]
+            },
+            {
+                category: "phase",
+                dim: "7. 热力学极限",
+                physics: "胶球共振气体（GRG）在临界温度 T_c 发生解禁闭相变，融解为夸克-胶子等离子体",
+                cultivation: "体系内部无序热涨落超越相变临界点，自束缚势阱失效，有序非微扰实相瓦解为无序走火入魔态",
+                tags: ["解禁闭", "走火入魔"]
+            },
+            {
+                category: "phase",
+                dim: "8. 拓扑量子数",
+                physics: "轴反常与 QCD θ-真空拓扑荷涨落（对应 0⁻⁺ 赝标量胶球激发）",
+                cultivation: "调控真空拓扑缠绕数与 P/CP 对称性，在微观层面重塑现实概率流分布与因果定力",
+                tags: ["拓扑荷", "扭转乾坤"]
+            }
+        ];
+
+        // --- 2. UI INTERACTION FUNCTIONS ---
+
+        // Mechanism Selection
+        function selectMechanism(index) {
+            const m = mechanismsData[index];
+            const display = document.getElementById("mechanism-display");
+            
+            // Highlight buttons
+            for(let i=0; i<5; i++){
+                const btn = document.getElementById(`mech-btn-${i}`);
+                if(i === index) {
+                    btn.className = "px-4 py-2 rounded-lg bg-stone-900 text-white shadow-sm transition-all font-medium";
+                } else {
+                    btn.className = "px-4 py-2 rounded-lg text-stone-700 hover:bg-stone-200 transition-all font-medium";
+                }
+            }
+
+            display.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-3xl">${m.icon}</span>
+                        <div>
+                            <span class="text-xs font-bold text-amber-700 uppercase tracking-wide">${m.badge}</span>
+                            <h4 class="font-extrabold text-stone-900 text-lg">${m.title}</h4>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm text-stone-700">
+                        <div class="p-3 bg-stone-100 rounded-xl border border-stone-200">
+                            <span class="font-semibold text-stone-900 block mb-0.5">⚛ 量子色动力学 (QCD) 微观物理：</span>
+                            <p class="text-xs text-stone-600 leading-relaxed">${m.physics}</p>
+                        </div>
+                        <div class="p-3 bg-amber-50/80 rounded-xl border border-amber-200">
+                            <span class="font-semibold text-amber-900 block mb-0.5">☯ 修真体系 (Cultivation) 宏观映射：</span>
+                            <p class="text-xs text-amber-800 leading-relaxed">${m.cultivation}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-panelbg p-5 rounded-xl border border-stone-300 flex flex-col justify-center items-center text-center space-y-3">
+                    <span class="text-xs text-stone-500 font-bold">相变跃迁示意图景</span>
+                    <div class="w-full h-32 bg-warmbg rounded-lg border border-stone-200 flex items-center justify-center p-3 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10"></div>
+                        <div class="relative z-10 text-xs font-semibold text-stone-800 space-y-2">
+                            <div class="flex items-center justify-center space-x-2">
+                                <span class="px-2 py-1 bg-stone-200 rounded">微扰波动场</span>
+                                <span>➔</span>
+                                <span class="px-2 py-1 bg-amber-600 text-white rounded shadow">非微扰孤子 (结丹)</span>
+                            </div>
+                            <p class="text-[11px] text-stone-500">自非对易杨-米尔斯场中自发生成惯性质量</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- 3. CHART.JS INITIALIZATIONS ---
+
+        let spectrumChartInstance = null;
+        let purityChartInstance = null;
+
+        function initSpectrumChart() {
+            const ctx = document.getElementById('spectrumChart').getContext('2d');
+            
+            spectrumChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: spectrumData.map(d => d.spin),
+                    datasets: [{
+                        label: '预估/测量质量 (GeV/c²)',
+                        data: spectrumData.map(d => d.massNum),
+                        backgroundColor: [
+                            'rgba(217, 119, 6, 0.75)',
+                            'rgba(79, 70, 229, 0.75)',
+                            'rgba(5, 150, 105, 0.75)',
+                            'rgba(28, 25, 23, 0.75)'
+                        ],
+                        borderColor: [
+                            '#d97706',
+                            '#4f46e5',
+                            '#059669',
+                            '#1c1917'
+                        ],
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    onClick: (evt, activeElements) => {
+                        if (activeElements.length > 0) {
+                            const index = activeElements[0].index;
+                            updateSpectrumDetails(index);
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const d = spectrumData[context.dataIndex];
+                                    return `质量: ${d.massNum} GeV | 候选: ${d.candidate}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 3.8,
+                            title: { display: true, text: '能量/质量 (GeV/c²)', font: { size: 11 } }
+                        },
+                        x: {
+                            ticks: { font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateSpectrumDetails(index) {
+            const d = spectrumData[index];
+            document.getElementById('detail-badge').innerText = d.spin;
+            document.getElementById('detail-title').innerText = d.realm;
+            document.getElementById('detail-physics').innerText = `格点预测: ${d.massLattice}；候选: ${d.candidate}`;
+            document.getElementById('detail-decay').innerText = d.decay;
+            document.getElementById('detail-cultivation').innerText = d.cultivation;
+            document.getElementById('detail-fermion').innerText = d.fermion;
+            document.getElementById('detail-stability').innerText = d.stability;
+        }
+
+        // Purity Doughnut Chart
+        function initPurityChart() {
+            const ctx = document.getElementById('purityChart').getContext('2d');
+            
+            purityChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['纯胶味单态 (|G⟩)', '轻夸克杂化 (|u ū + d d̄⟩)', '奇异夸克成分 (|s s̄⟩)'],
+                    datasets: [{
+                        data: [95, 3, 2],
+                        backgroundColor: [
+                            '#d97706',
+                            '#94a3b8',
+                            '#cbd5e1'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fbf9f5'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { size: 11 }, boxWidth: 12 }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+            
+            updatePurityText(95);
+        }
+
+        function updatePurityChart() {
+            const val = parseInt(document.getElementById('slider-purity').value);
+            document.getElementById('val-purity-pct').innerText = val + ' %';
+            
+            const rem = 100 - val;
+            const qLight = Math.round(rem * 0.6);
+            const qStrange = rem - qLight;
+
+            purityChartInstance.data.datasets[0].data = [val, qLight, qStrange];
+            purityChartInstance.update();
+
+            updatePurityText(val);
+        }
+
+        function updatePurityText(purity) {
+            const container = document.getElementById('purity-explanation');
+            if(purity >= 90) {
+                container.innerHTML = `
+                    <p class="font-bold text-amber-900">✨ BESIII X(2370) 纯阳法身解耦区 (纯度 ${purity}%)</p>
+                    <p>当波函数中味单态纯度突破90%（混合角 θ < 5°），系统解耦夸克衰变通道。在修真体系中，这标志着元婴脱胎换骨，法身摆脱肉身费米子阴质的物质衰变链，达到长程自洽的阳神境界。</p>
+                `;
+            } else if(purity >= 60) {
+                container.innerHTML = `
+                    <p class="font-bold text-indigo-900">☯ 阴阳交织金丹态 (纯度 ${purity}%)</p>
+                    <p>对应 f₀(1500)/f₀(1710) 等混合态，能量场虽然已凝结为核，但仍与血肉躯体（后天夸克海）存在强烈电弱与强衰变耦合，未完全脱离后天阴质。</p>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p class="font-bold text-stone-900">🌱 筑基凡胎杂化区 (纯度 ${purity}%)</p>
+                    <p>大部分能量成分由夸克-反夸克费米子占据，能量自相干极低，易受外界环境热噪声干扰，属于初阶练气修持阶段。</p>
+                `;
+            }
+        }
+
+        // --- 4. CANVAS SIMULATOR LOGIC ---
+
+        let animFrameId = null;
+        let particles = [];
+        const canvas = document.getElementById('simCanvas');
+        const ctxCanvas = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = 35;
+            for(let i=0; i<count; i++){
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    color: Math.random() > 0.5 ? '#f59e0b' : '#6366f1',
+                    radius: Math.random() * 2 + 2,
+                    rOff: (Math.random() - 0.5) * 18,
+                    orbitPhase: Math.random() * Math.PI * 2
+                });
+            }
+        }
+
+        function updateSimulation() {
+            const energy = parseInt(document.getElementById('slider-energy').value);
+            const coupling = parseFloat(document.getElementById('slider-coupling').value);
+
+            document.getElementById('val-energy').innerText = energy + ' %';
+            document.getElementById('val-coupling').innerText = coupling.toFixed(2);
+
+            const gapBar = document.getElementById('sim-gap-bar');
+            const phaseTxt = document.getElementById('sim-phase');
+            const fluxTxt = document.getElementById('sim-flux');
+            const descTxt = document.getElementById('sim-status-desc');
+
+            // Phase transition math metric
+            const phaseIndex = (energy / 100) * coupling;
+
+            gapBar.style.width = Math.min(100, Math.max(5, phaseIndex * 150)) + '%';
+
+            if(phaseIndex > 0.45) {
+                phaseTxt.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-600 text-white shadow-sm";
+                phaseTxt.innerText = "非微扰胶球孤子 (金丹已成)";
+                fluxTxt.innerText = "通量管收缩 (色禁闭)";
+                fluxTxt.className = "text-xs font-bold text-amber-600";
+                descTxt.innerText = "局部规范场自吸引力超越热扩散，能量通量完全锁闭于局域体积内，杨-米尔斯质量间隙 Δ 激活，成功凝聚稳态金丹！";
+            } else if(phaseIndex > 0.2) {
+                phaseTxt.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-900";
+                phaseTxt.innerText = "临界相变区 (凝气筑基)";
+                fluxTxt.innerText = "通量管构建中";
+                fluxTxt.className = "text-xs font-semibold text-indigo-600";
+                descTxt.innerText = "非对易三/四胶子自作用顶点开始显现，系统出现局部涨落涡旋，正在跨越质量间隙激活阈值。";
+            } else {
+                phaseTxt.className = "text-xs font-bold px-2.5 py-0.5 rounded-full bg-stone-200 text-stone-800";
+                phaseTxt.innerText = "渐近自由 (微扰灵气)";
+                fluxTxt.innerText = "弥散发散";
+                fluxTxt.className = "text-xs font-semibold text-stone-500";
+                descTxt.innerText = "系统处于阿贝尔式线性传输区，能量向外辐射泄漏，无法形成稳定凝聚核。";
+            }
+        }
+
+        function renderCanvas() {
+            ctxCanvas.clearRect(0, 0, canvas.width, canvas.height);
+
+            const energy = parseInt(document.getElementById('slider-energy').value) / 100;
+            const coupling = parseFloat(document.getElementById('slider-coupling').value);
+            const phaseIndex = energy * coupling; // 0.005 ~ 1.0
+
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const t = Date.now();
+
+            // 收敛度 s: 0（渐近自由）→ 1（完全禁闭），随 phaseIndex 连续过渡
+            const s = Math.min(1, Math.max(0, (phaseIndex - 0.10) / 0.40));
+
+            // 目标凝聚轨道半径：从近半画布连续收缩至丹核周围
+            const maxR = Math.min(canvas.width, canvas.height) * 0.42;
+            const targetR = maxR * (1 - s) + 36 * s;
+
+            // 金丹核心与禁闭光晕淡入
+            const coreAlpha = Math.min(1, Math.max(0, (phaseIndex - 0.32) / 0.18));
+            const glowR = 45 + Math.sin(t * 0.005) * 4;
+
+            // 连续演化的动力学参数
+            const springK = 0.002 + s * 0.010;         // 径向束缚：拉向各自轨道环
+            const accCap  = 1.6;                        // 单帧加速度上限，防过冲狂飙
+            const swirl   = 0.020 + s * 0.080;          // 切向周天运转
+            const damping = 0.990 - s * 0.030;          // 禁闭耗散，动能收敛为稳定轨道
+            const heat    = 0.30 * (1 - s) * (1 - s);   // 微扰区热涨落，随禁闭消失
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const dx = centerX - p.x;
+                const dy = centerY - p.y;
+                const dist = Math.hypot(dx, dy) || 1;
+                const ringR = targetR + p.rOff;
+
+                // 径向束缚：粒子被连续拉向目标轨道半径（螺旋吸入）
+                const radialErr = dist - ringR;
+                let aR = radialErr * springK;
+                if (aR > accCap) aR = accCap;
+                if (aR < -accCap) aR = -accCap;
+                p.vx += (dx / dist) * aR;
+                p.vy += (dy / dist) * aR;
+
+                // 切向分量：周天运化，形成绕核旋转
+                p.vx += (-dy / dist) * swirl;
+                p.vy += (dx / dist) * swirl;
+
+                // 热涨落：微扰区的随机散射
+                if (heat > 0.01) {
+                    p.vx += (Math.random() - 0.5) * heat;
+                    p.vy += (Math.random() - 0.5) * heat;
+                }
+
+                // 耗散收敛
+                p.vx *= damping;
+                p.vy *= damping;
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                // 边界保护
+                const m = 10;
+                if (p.x < m) { p.x = m; p.vx = Math.abs(p.vx); }
+                if (p.x > canvas.width - m) { p.x = canvas.width - m; p.vx = -Math.abs(p.vx); }
+                if (p.y < m) { p.y = m; p.vy = Math.abs(p.vy); }
+                if (p.y > canvas.height - m) { p.y = canvas.height - m; p.vy = -Math.abs(p.vy); }
+            }
+
+            // 粒子间弱耦合连线（微扰区特征，随禁闭淡出）
+            const weakAlpha = 0.32 * (1 - s);
+            if (weakAlpha > 0.02) {
+                ctxCanvas.lineWidth = 1;
+                for (let i = 0; i < particles.length; i++) {
+                    const p = particles[i];
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                        if (d < 70) {
+                            ctxCanvas.beginPath();
+                            ctxCanvas.moveTo(p.x, p.y);
+                            ctxCanvas.lineTo(p2.x, p2.y);
+                            ctxCanvas.strokeStyle = `rgba(99, 102, 241, ${weakAlpha * (1 - d / 70)})`;
+                            ctxCanvas.stroke();
+                        }
+                    }
+                }
+            }
+
+            // 色通量管：中心 → 粒子，随禁闭淡入
+            if (s > 0.02) {
+                ctxCanvas.lineWidth = 1.5;
+                for (const p of particles) {
+                    ctxCanvas.beginPath();
+                    ctxCanvas.moveTo(centerX, centerY);
+                    ctxCanvas.lineTo(p.x, p.y);
+                    ctxCanvas.strokeStyle = `rgba(217, 119, 6, ${0.22 * s})`;
+                    ctxCanvas.stroke();
+                }
+            }
+
+            // 粒子
+            for (const p of particles) {
+                ctxCanvas.beginPath();
+                ctxCanvas.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctxCanvas.fillStyle = p.color;
+                ctxCanvas.fill();
+            }
+
+            // 金丹核心与禁闭光晕（淡入）
+            if (coreAlpha > 0.01) {
+                ctxCanvas.beginPath();
+                ctxCanvas.arc(centerX, centerY, glowR, 0, Math.PI * 2);
+                ctxCanvas.fillStyle = `rgba(217, 119, 6, ${0.25 * coreAlpha})`;
+                ctxCanvas.fill();
+                ctxCanvas.strokeStyle = `rgba(217, 119, 6, ${coreAlpha})`;
+                ctxCanvas.lineWidth = 2;
+                ctxCanvas.stroke();
+
+                ctxCanvas.beginPath();
+                ctxCanvas.arc(centerX, centerY, 12 + 3 * coreAlpha, 0, Math.PI * 2);
+                ctxCanvas.fillStyle = `rgba(245, 158, 11, ${coreAlpha})`;
+                ctxCanvas.fill();
+            }
+
+            animFrameId = requestAnimationFrame(renderCanvas);
+        }
+
+        // --- 5. COMPREHENSIVE MATRIX LOGIC ---
+
+        function renderMatrix(items) {
+            const grid = document.getElementById("matrix-grid");
+            grid.innerHTML = "";
+
+            if(items.length === 0) {
+                grid.innerHTML = `<div class="col-span-2 text-center py-8 text-stone-500 text-sm">未找到匹配的对照维度。</div>`;
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "bg-warmbg p-5 rounded-2xl border border-stone-300 shadow-sm space-y-3 hover:border-amber-400 transition-all";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-stone-200 pb-2">
+                        <h4 class="font-bold text-stone-900 text-sm">${item.dim}</h4>
+                        <div class="flex space-x-1">
+                            ${item.tags.map(t => `<span class="px-2 py-0.5 rounded text-[10px] bg-stone-100 text-stone-600 font-medium">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-xs">
+                        <div class="p-2.5 bg-stone-100/80 rounded-lg">
+                            <span class="font-bold text-stone-900 block mb-0.5">⚛ QCD 微观物理：</span>
+                            <span class="text-stone-700 leading-relaxed">${item.physics}</span>
+                        </div>
+                        <div class="p-2.5 bg-amber-50/80 rounded-lg border border-amber-200/60">
+                            <span class="font-bold text-amber-900 block mb-0.5">☯ 修炼宏观表象：</span>
+                            <span class="text-amber-900 leading-relaxed">${item.cultivation}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        let currentCategory = 'all';
+
+        function setMatrixFilter(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.matrix-flt-btn').forEach(btn => {
+                btn.className = "matrix-flt-btn px-3 py-1.5 rounded-lg bg-warmbg text-stone-700 hover:bg-stone-200 border border-stone-300 font-medium";
+            });
+            event.target.className = "matrix-flt-btn active-flt px-3 py-1.5 rounded-lg bg-stone-900 text-white font-medium";
+            filterMatrix();
+        }
+
+        function filterMatrix() {
+            const query = document.getElementById("matrix-search").value.toLowerCase();
+            const filtered = matrixItems.filter(item => {
+                const matchCat = (currentCategory === 'all' || item.category === currentCategory);
+                const matchQuery = item.dim.toLowerCase().includes(query) ||
+                                   item.physics.toLowerCase().includes(query) ||
+                                   item.cultivation.toLowerCase().includes(query) ||
+                                   item.tags.some(t => t.toLowerCase().includes(query));
+                return matchCat && matchQuery;
+            });
+            renderMatrix(filtered);
+        }
+
+        // --- 6. INITIALIZATION ON DOM LOAD ---
+
+        window.addEventListener('DOMContentLoaded', () => {
+            selectMechanism(0);
+            initSpectrumChart();
+            initPurityChart();
+            renderMatrix(matrixItems);
+
+            // Canvas Setup
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            initParticles();
+            updateSimulation();
+            renderCanvas();
+        });
+    </script>
+</body>
+</html>
